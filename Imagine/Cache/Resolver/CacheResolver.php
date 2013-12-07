@@ -70,6 +70,7 @@ class CacheResolver implements ResolverInterface
          *
          * If it's not a string, it's a Response it will be returned as it without calling the store method.
          */
+        //TODO fix this since resolve method does not return string any more.
         if (is_string($targetPath)) {
             $reverseKey = $this->generateCacheKey('reverse', $targetPath, $filter);
             $this->saveToCache($reverseKey, $path);
@@ -81,9 +82,9 @@ class CacheResolver implements ResolverInterface
     /**
      * {@inheritDoc}
      */
-    public function store(Response $response, $targetPath, $filter)
+    public function store(Response $response, $path, $filter)
     {
-        return $this->resolver->store($response, $targetPath, $filter);
+        return $this->resolver->store($response, $path, $filter);
     }
 
     /**

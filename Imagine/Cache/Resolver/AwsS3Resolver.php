@@ -90,27 +90,27 @@ class AwsS3Resolver implements ResolverInterface, CacheManagerAwareInterface
         if ($this->objectExists($objectPath)) {
             return new RedirectResponse($this->getObjectUrl($objectPath), 301);
         }
-
-        return $objectPath;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function store(Response $response, $targetPath, $filter)
+    public function store(Response $response, $path, $filter)
     {
+        $objectPath = $this->getObjectPath($path, $filter);
+
         try {
             $storageResponse = $this->storage->putObject(array(
                 'ACL'           => $this->acl,
                 'Bucket'        => $this->bucket,
-                'Key'           => $targetPath,
+                'Key'           => $objectPath,
                 'Body'          => $response->getContent(),
                 'ContentType'   => $response->headers->get('Content-Type')
             ));
         } catch (\Exception $e) {
             if ($this->logger) {
                 $this->logger->warn('The object could not be created on Amazon S3.', array(
-                    'targetPath'  => $targetPath,
+                    'targetPath'  => $objectPath,
                     'filter'      => $filter,
                 ));
             }

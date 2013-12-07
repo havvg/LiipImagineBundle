@@ -160,9 +160,8 @@ class AwsS3ResolverTest extends AbstractTest
         ;
 
         $resolver = new AwsS3Resolver($s3, 'images.example.com');
-        $targetPath = $resolver->resolve('/some-folder/targetpath.jpg', 'thumb');
 
-        $this->assertEquals('thumb/some-folder/targetpath.jpg', $targetPath);
+        $this->assertNull($resolver->resolve('/some-folder/targetpath.jpg', 'thumb'));
     }
 
     public function testResolveRedirectsOnExisting()

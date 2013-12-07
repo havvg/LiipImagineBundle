@@ -89,16 +89,16 @@ class AmazonS3Resolver implements ResolverInterface, CacheManagerAwareInterface
         if ($this->objectExists($objectPath)) {
             return new RedirectResponse($this->getObjectUrl($objectPath), 301);
         }
-
-        return $objectPath;
     }
 
     /**
      * {@inheritDoc}
      */
-    public function store(Response $response, $targetPath, $filter)
+    public function store(Response $response, $path, $filter)
     {
-        $storageResponse = $this->storage->create_object($this->bucket, $targetPath, array(
+        $objectPath = $this->getObjectPath($path, $filter);
+
+        $storageResponse = $this->storage->create_object($this->bucket, $objectPath, array(
             'body' => $response->getContent(),
             'contentType' => $response->headers->get('Content-Type'),
             'length' => strlen($response->getContent()),
@@ -107,11 +107,11 @@ class AmazonS3Resolver implements ResolverInterface, CacheManagerAwareInterface
 
         if ($storageResponse->isOK()) {
             $response->setStatusCode(301);
-            $response->headers->set('Location', $this->getObjectUrl($targetPath));
+            $response->headers->set('Location', $this->getObjectUrl($objectPath));
         } else {
             if ($this->logger) {
                 $this->logger->warn('The object could not be created on Amazon S3.', array(
-                    'targetPath' => $targetPath,
+                    'targetPath' => $objectPath,
                     'filter' => $filter,
                     's3_response' => $storageResponse,
                 ));

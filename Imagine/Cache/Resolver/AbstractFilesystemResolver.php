@@ -83,18 +83,12 @@ abstract class AbstractFilesystemResolver implements ResolverInterface, CacheMan
     }
 
     /**
-     * Stores the content into a static file.
-     *
-     * @param Response $response
-     * @param string $targetPath
-     * @param string $filter
-     *
-     * @return Response
-     *
-     * @throws \RuntimeException
+     * {@inheritDoc}
      */
-    public function store(Response $response, $targetPath, $filter)
+    public function store(Response $response, $path, $filter)
     {
+        $targetPath = $this->getFilePath($path, $filter);
+
         $dir = pathinfo($targetPath, PATHINFO_DIRNAME);
 
         $this->makeFolder($dir);

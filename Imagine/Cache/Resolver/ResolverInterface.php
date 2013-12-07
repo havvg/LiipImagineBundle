@@ -12,8 +12,7 @@ interface ResolverInterface
      * @param string $path The path where the resolved file is expected.
      * @param string $filter The name of the imagine filter in effect.
      *
-     * @return string|Response The target path to be used in other methods of this Resolver,
-     *                         a Response may be returned to avoid calling store upon resolution.
+     * @return Response A http response that either contain an image content or a redirect.
      *
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException In case the path can not be resolved.
      */
@@ -23,12 +22,12 @@ interface ResolverInterface
      * Stores the content of the given Response.
      *
      * @param Response $response The response provided by the _imagine_* filter route.
-     * @param string $targetPath The target path provided by the resolve method.
+     * @param string $path The path where the resolved file is expected.
      * @param string $filter The name of the imagine filter in effect.
      *
      * @return Response The (modified) response to be sent to the browser.
      */
-    function store(Response $response, $targetPath, $filter);
+    function store(Response $response, $path, $filter);
 
     /**
      * Returns a web accessible URL.

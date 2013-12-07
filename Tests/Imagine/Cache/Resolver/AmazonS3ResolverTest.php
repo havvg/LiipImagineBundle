@@ -134,7 +134,7 @@ class AmazonS3ResolverTest extends AbstractTest
 
         $resolver = new AmazonS3Resolver($s3, 'images.example.com');
 
-        $this->assertSame($response, $resolver->store($response, 'thumb/foobar.jpg', 'thumb'));
+        $this->assertSame($response, $resolver->store($response, 'foobar.jpg', 'thumb'));
         $this->assertEquals(301, $response->getStatusCode());
         $this->assertEquals('http://images.example.com/thumb/foobar.jpg', $response->headers->get('Location'));
     }
@@ -149,9 +149,8 @@ class AmazonS3ResolverTest extends AbstractTest
         ;
 
         $resolver = new AmazonS3Resolver($s3, 'images.example.com');
-        $targetPath = $resolver->resolve('/some-folder/targetpath.jpg', 'thumb');
 
-        $this->assertEquals('thumb/some-folder/targetpath.jpg', $targetPath);
+        $this->assertNull($resolver->resolve('/some-folder/targetpath.jpg', 'thumb'));
     }
 
     public function testResolveRedirectsOnExisting()
