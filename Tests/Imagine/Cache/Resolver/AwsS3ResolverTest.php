@@ -13,26 +13,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class AwsS3ResolverTest extends AbstractTest
 {
-    protected function setUp()
-    {
-        parent::setUp();
-
-        if (!class_exists('Aws\S3\S3Client')) {
-            require_once($this->fixturesDir.'/S3Client.php');
-        }
-
-        if (!class_exists('Aws\S3\Enum\CannedAcl')) {
-            require_once($this->fixturesDir.'/CannedAcl.php');
-        }
-
-        if (!class_exists('Guzzle\Service\Resource\Model')) {
-            require_once($this->fixturesDir.'/Model.php');
-        }
-    }
-
     public function testNoDoubleSlashesInObjectUrl()
     {
-        $s3 = $this->getMock('Aws\S3\S3Client');
+        $s3 = $this->getS3ClientMock();
         $s3
             ->expects($this->once())
             ->method('doesObjectExist')
@@ -51,7 +34,7 @@ class AwsS3ResolverTest extends AbstractTest
 
     public function testObjUrlOptions()
     {
-        $s3 = $this->getMock('Aws\S3\S3Client');
+        $s3 = $this->getS3ClientMock();
         $s3
             ->expects($this->once())
             ->method('doesObjectExist')
@@ -70,7 +53,7 @@ class AwsS3ResolverTest extends AbstractTest
 
     public function testBrowserPathNotExisting()
     {
-        $s3 = $this->getMock('Aws\S3\S3Client');
+        $s3 = $this->getS3ClientMock();
         $s3
             ->expects($this->once())
             ->method('doesObjectExist')
@@ -102,7 +85,7 @@ class AwsS3ResolverTest extends AbstractTest
         $response->setContent('foo');
         $response->headers->set('Content-Type', 'image/jpeg');
 
-        $s3 = $this->getMock('Aws\S3\S3Client');
+        $s3 = $this->getS3ClientMock();
         $s3
             ->expects($this->once())
             ->method('putObject')
@@ -129,7 +112,7 @@ class AwsS3ResolverTest extends AbstractTest
 
         $responseMock = $this->getS3ResponseMock();
 
-        $s3 = $this->getMock('Aws\S3\S3Client');
+        $s3 = $this->getS3ClientMock();
         $s3
             ->expects($this->once())
             ->method('putObject')
@@ -152,7 +135,7 @@ class AwsS3ResolverTest extends AbstractTest
 
     public function testResolveNewObject()
     {
-        $s3 = $this->getMock('Aws\S3\S3Client');
+        $s3 = $this->getS3ClientMock();
         $s3
             ->expects($this->once())
             ->method('doesObjectExist')
@@ -166,7 +149,7 @@ class AwsS3ResolverTest extends AbstractTest
 
     public function testResolveRedirectsOnExisting()
     {
-        $s3 = $this->getMock('Aws\S3\S3Client');
+        $s3 = $this->getS3ClientMock();
         $s3
             ->expects($this->once())
             ->method('doesObjectExist')
@@ -189,7 +172,7 @@ class AwsS3ResolverTest extends AbstractTest
 
     public function testRemove()
     {
-        $s3 = $this->getMock('Aws\S3\S3Client');
+        $s3 = $this->getS3ClientMock();
         $s3
             ->expects($this->once())
             ->method('doesObjectExist')
@@ -212,7 +195,7 @@ class AwsS3ResolverTest extends AbstractTest
 
     public function testRemoveNotExisting()
     {
-        $s3 = $this->getMock('Aws\S3\S3Client');
+        $s3 = $this->getS3ClientMock();
         $s3
             ->expects($this->once())
             ->method('doesObjectExist')
@@ -230,7 +213,7 @@ class AwsS3ResolverTest extends AbstractTest
 
     public function testClearIsDisabled()
     {
-        $s3 = $this->getMock('Aws\S3\S3Client');
+        $s3 = $this->getS3ClientMock();
         $s3
             ->expects($this->never())
             ->method('deleteObject')
@@ -246,4 +229,18 @@ class AwsS3ResolverTest extends AbstractTest
 
         return $s3Response;
     }
+
+    protected function getS3ClientMock()
+    {
+        $mockedMethods = array(
+            'deleteObject',
+            'createObject',
+            'putObject',
+            'doesObjectExist',
+            'getObjectUrl',
+        );
+
+        return $this->getMock('Aws\S3\S3Client', $mockedMethods, array(), '', false);
+    }
+
 }
