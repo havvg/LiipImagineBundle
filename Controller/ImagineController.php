@@ -51,13 +51,13 @@ class ImagineController
      */
     public function filterAction(Request $request, $path, $filter)
     {
-        $originalImagePath = $path;
-        if ($response = $this->cacheManager->resolve($originalImagePath, $filter)) {
+        if ($response = $this->cacheManager->resolve($path, $filter)) {
             return $response;
         }
 
-        $originalImage = $this->dataManager->find($filter, $originalImagePath);
-        $response = $this->filterManager->get($request, $filter, $originalImage, $originalImagePath);
+        $image = $this->dataManager->find($filter, $path);
+
+        $response = $this->filterManager->get($request, $filter, $image, $path);
 
         return $this->cacheManager->store($response, $path, $filter);
     }
