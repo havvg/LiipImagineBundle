@@ -19,17 +19,17 @@ class AmazonS3ResolverTest extends AbstractTest
         $s3
             ->expects($this->once())
             ->method('if_object_exists')
-            ->with('images.example.com', 'thumb/some-folder/targetpath.jpg')
+            ->with('images.example.com', 'thumb/some-folder/path.jpg')
             ->will($this->returnValue(true))
         ;
         $s3
             ->expects($this->once())
             ->method('get_object_url')
-            ->with('images.example.com', 'thumb/some-folder/targetpath.jpg')
+            ->with('images.example.com', 'thumb/some-folder/path.jpg')
         ;
 
         $resolver = new AmazonS3Resolver($s3, 'images.example.com');
-        $resolver->getBrowserPath('/some-folder/targetpath.jpg', 'thumb');
+        $resolver->getBrowserPath('/some-folder/path.jpg', 'thumb');
     }
 
     public function testObjUrlOptions()
@@ -43,12 +43,12 @@ class AmazonS3ResolverTest extends AbstractTest
         $s3
             ->expects($this->once())
             ->method('get_object_url')
-            ->with('images.example.com', 'thumb/some-folder/targetpath.jpg', 0, array('torrent' => true))
+            ->with('images.example.com', 'thumb/some-folder/path.jpg', 0, array('torrent' => true))
         ;
 
         $resolver = new AmazonS3Resolver($s3, 'images.example.com');
         $resolver->setObjectUrlOption('torrent', true);
-        $resolver->getBrowserPath('/some-folder/targetpath.jpg', 'thumb');
+        $resolver->getBrowserPath('/some-folder/path.jpg', 'thumb');
     }
 
     public function testBrowserPathNotExisting()
@@ -57,7 +57,7 @@ class AmazonS3ResolverTest extends AbstractTest
         $s3
             ->expects($this->once())
             ->method('if_object_exists')
-            ->with('images.example.com', 'thumb/some-folder/targetpath.jpg')
+            ->with('images.example.com', 'thumb/some-folder/path.jpg')
             ->will($this->returnValue(false))
         ;
         $s3
@@ -69,14 +69,14 @@ class AmazonS3ResolverTest extends AbstractTest
         $cacheManager
             ->expects($this->once())
             ->method('generateUrl')
-            ->with('/some-folder/targetpath.jpg', 'thumb', false)
-            ->will($this->returnValue('/media/cache/thumb/some-folder/targetpath.jpg'))
+            ->with('/some-folder/path.jpg', 'thumb', false)
+            ->will($this->returnValue('/media/cache/thumb/some-folder/path.jpg'))
         ;
 
         $resolver = new AmazonS3Resolver($s3, 'images.example.com');
         $resolver->setCacheManager($cacheManager);
 
-        $this->assertEquals('/media/cache/thumb/some-folder/targetpath.jpg', $resolver->getBrowserPath('/some-folder/targetpath.jpg', 'thumb'));
+        $this->assertEquals('/media/cache/thumb/some-folder/path.jpg', $resolver->getBrowserPath('/some-folder/path.jpg', 'thumb'));
     }
 
     public function testLogNotCreatedObjects()
@@ -141,7 +141,7 @@ class AmazonS3ResolverTest extends AbstractTest
 
         $resolver = new AmazonS3Resolver($s3, 'images.example.com');
 
-        $this->assertNull($resolver->resolve('/some-folder/targetpath.jpg', 'thumb'));
+        $this->assertNull($resolver->resolve('/some-folder/path.jpg', 'thumb'));
     }
 
     public function testResolveRedirectsOnExisting()
@@ -155,16 +155,16 @@ class AmazonS3ResolverTest extends AbstractTest
         $s3
             ->expects($this->once())
             ->method('get_object_url')
-            ->with('images.example.com', 'thumb/some-folder/targetpath.jpg', 0, array())
-            ->will($this->returnValue('http://images.example.com/some-folder/targetpath.jpg'))
+            ->with('images.example.com', 'thumb/some-folder/path.jpg', 0, array())
+            ->will($this->returnValue('http://images.example.com/some-folder/path.jpg'))
         ;
 
         $resolver = new AmazonS3Resolver($s3, 'images.example.com');
-        $response = $resolver->resolve('/some-folder/targetpath.jpg', 'thumb');
+        $response = $resolver->resolve('/some-folder/path.jpg', 'thumb');
 
         $this->assertInstanceOf('Symfony\Component\HttpFoundation\Response', $response);
         $this->assertEquals(301, $response->getStatusCode());
-        $this->assertEquals('http://images.example.com/some-folder/targetpath.jpg', $response->headers->get('Location'));
+        $this->assertEquals('http://images.example.com/some-folder/path.jpg', $response->headers->get('Location'));
     }
 
     public function testDeleteObjectIfObjectExistOnAmazonOnRemove()
