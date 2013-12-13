@@ -111,7 +111,7 @@ class AmazonS3Resolver implements ResolverInterface, CacheManagerAwareInterface
         } else {
             if ($this->logger) {
                 $this->logger->warn('The object could not be created on Amazon S3.', array(
-                    'targetPath' => $objectPath,
+                    'objectPath' => $objectPath,
                     'filter' => $filter,
                     's3_response' => $storageResponse,
                 ));
@@ -192,13 +192,13 @@ class AmazonS3Resolver implements ResolverInterface, CacheManagerAwareInterface
     /**
      * Returns the URL for an object saved on Amazon S3.
      *
-     * @param string $targetPath
+     * @param string $path
      *
      * @return string
      */
-    protected function getObjectUrl($targetPath)
+    protected function getObjectUrl($path)
     {
-        return $this->storage->get_object_url($this->bucket, $targetPath, 0, $this->objUrlOptions);
+        return $this->storage->get_object_url($this->bucket, $path, 0, $this->objUrlOptions);
     }
 
     /**
