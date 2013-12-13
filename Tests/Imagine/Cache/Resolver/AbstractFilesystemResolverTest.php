@@ -141,11 +141,11 @@ class AbstractFilesystemResolverTest extends AbstractTest
     }
 
     /**
-     * @param string $filesystem
+     * @param Filesystem $filesystem
      *
      * @return \PHPUnit_Framework_MockObject_MockObject|\Liip\ImagineBundle\Imagine\Cache\Resolver\AbstractFilesystemResolver
      */
-    protected function getMockAbstractFilesystemResolver($filesystem)
+    protected function getMockAbstractFilesystemResolver(Filesystem $filesystem)
     {
         return $this->getMock('Liip\ImagineBundle\Imagine\Cache\Resolver\AbstractFilesystemResolver', array('resolve', 'clear', 'getBrowserPath', 'getFilePath'), array($filesystem));
     }
