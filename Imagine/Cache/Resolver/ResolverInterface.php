@@ -12,7 +12,7 @@ interface ResolverInterface
      * @param string $path   The path where the original file is expected to be.
      * @param string $filter The name of the imagine filter in effect.
      *
-     * @return Response A http response that either contain an image content or a redirect.
+     * @return Response An HTTP response that either contains image content or redirects to a URL to load the image from.
      *
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException In case the path can not be resolved.
      */
