@@ -9,7 +9,7 @@ interface ResolverInterface
     /**
      * Resolves filtered path for rendering in the browser.
      *
-     * @param string $path The path where the resolved file is expected.
+     * @param string $path   The path where the original file is expected to be.
      * @param string $filter The name of the imagine filter in effect.
      *
      * @return Response A http response that either contain an image content or a redirect.
@@ -22,8 +22,8 @@ interface ResolverInterface
      * Stores the content of the given Response.
      *
      * @param Response $response The response provided by the _imagine_* filter route.
-     * @param string $path The path where the resolved file is expected.
-     * @param string $filter The name of the imagine filter in effect.
+     * @param string   $path     The path where the original file is expected to be.
+     * @param string   $filter   The name of the imagine filter in effect.
      *
      * @return Response The (modified) response to be sent to the browser.
      */
@@ -32,7 +32,7 @@ interface ResolverInterface
     /**
      * Returns a web accessible URL.
      *
-     * @param string $path The path where the resolved file is expected.
+     * @param string $path   The path where the original file is expected to be.
      * @param string $filter The name of the imagine filter in effect.
      * @param bool $absolute Whether to generate an absolute URL or a relative path is accepted.
      *                       In case the resolver does not support relative paths, it may ignore this flag.
@@ -42,14 +42,14 @@ interface ResolverInterface
     function getBrowserPath($path, $filter, $absolute = false);
 
     /**
-     * Removes a stored image resource.
+     * Removes a cached image resource.
      *
-     * @param string $targetPath The target path provided by the resolve method.
+     * @param string $path   The path where the original file is expected to be.
      * @param string $filter The name of the imagine filter in effect.
      *
      * @return bool Whether the file has been removed successfully.
      */
-    function remove($targetPath, $filter);
+    function remove($path, $filter);
 
     /**
      * Clear the CacheResolver cache.

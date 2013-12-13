@@ -140,17 +140,19 @@ class AwsS3Resolver implements ResolverInterface, CacheManagerAwareInterface
     /**
      * {@inheritDoc}
      */
-    public function remove($targetPath, $filter)
+    public function remove($path, $filter)
     {
-        if (!$this->objectExists($targetPath)) {
+        $objectPath = $this->getObjectPath($path, $filter);
+
+        if (!$this->objectExists($objectPath)) {
             // A non-existing object to delete: done!
             return true;
         }
 
         try {
-            $response = $this->storage->deleteObject(array(
+            $this->storage->deleteObject(array(
                 'Bucket' => $this->bucket,
-                'Key'    => $targetPath,
+                'Key'    => $objectPath,
             ));
 
             return true;

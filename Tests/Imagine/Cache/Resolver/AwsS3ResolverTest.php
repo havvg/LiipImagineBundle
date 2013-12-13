@@ -170,7 +170,7 @@ class AwsS3ResolverTest extends AbstractTest
         $this->assertEquals('http://images.example.com/some-folder/targetpath.jpg', $response->headers->get('Location'));
     }
 
-    public function testRemove()
+    public function testDeleteObjectIfObjectExistOnAmazonOnRemove()
     {
         $s3 = $this->getS3ClientMock();
         $s3
@@ -190,10 +190,10 @@ class AwsS3ResolverTest extends AbstractTest
         ;
 
         $resolver = new AwsS3Resolver($s3, 'images.example.com');
-        $this->assertTrue($resolver->remove('thumb/some-folder/targetpath.jpg', 'thumb'));
+        $this->assertTrue($resolver->remove('some-folder/targetpath.jpg', 'thumb'));
     }
 
-    public function testRemoveNotExisting()
+    public function testDoNothingIfObjectNotExistOnAmazonOnRemove()
     {
         $s3 = $this->getS3ClientMock();
         $s3
@@ -208,7 +208,7 @@ class AwsS3ResolverTest extends AbstractTest
         ;
 
         $resolver = new AwsS3Resolver($s3, 'images.example.com');
-        $this->assertTrue($resolver->remove('thumb/some-folder/targetpath.jpg', 'thumb'));
+        $this->assertTrue($resolver->remove('some-folder/targetpath.jpg', 'thumb'));
     }
 
     public function testClearIsDisabled()

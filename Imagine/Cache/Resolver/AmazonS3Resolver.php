@@ -137,14 +137,16 @@ class AmazonS3Resolver implements ResolverInterface, CacheManagerAwareInterface
     /**
      * {@inheritDoc}
      */
-    public function remove($targetPath, $filter)
+    public function remove($path, $filter)
     {
-        if (!$this->objectExists($targetPath)) {
-            // A non-existing object to delete: done!
-            return true;
+        $objectPath = $this->getObjectPath($path, $filter);
+
+        if ($this->objectExists($objectPath)) {
+            return $this->storage->delete_object($this->bucket, $objectPath)->isOK();
         }
 
-        return $this->storage->delete_object($this->bucket, $targetPath)->isOK();
+        // A non-existing object to delete: done!
+        return true;
     }
 
     /**

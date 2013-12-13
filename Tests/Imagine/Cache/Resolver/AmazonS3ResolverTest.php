@@ -167,33 +167,33 @@ class AmazonS3ResolverTest extends AbstractTest
         $this->assertEquals('http://images.example.com/some-folder/targetpath.jpg', $response->headers->get('Location'));
     }
 
-    public function testRemove()
+    public function testDeleteObjectIfObjectExistOnAmazonOnRemove()
     {
         $s3 = $this->getAmazonS3Mock();
         $s3
             ->expects($this->once())
             ->method('if_object_exists')
-            ->with('images.example.com', 'thumb/some-folder/targetpath.jpg')
+            ->with('images.example.com', 'thumb/some-folder/path.jpg')
             ->will($this->returnValue(true))
         ;
         $s3
             ->expects($this->once())
             ->method('delete_object')
-            ->with('images.example.com', 'thumb/some-folder/targetpath.jpg')
+            ->with('images.example.com', 'thumb/some-folder/path.jpg')
             ->will($this->returnValue($this->getCFResponseMock(true)))
         ;
 
         $resolver = new AmazonS3Resolver($s3, 'images.example.com');
-        $this->assertTrue($resolver->remove('thumb/some-folder/targetpath.jpg', 'thumb'));
+        $this->assertTrue($resolver->remove('some-folder/path.jpg', 'thumb'));
     }
 
-    public function testRemoveNotExisting()
+    public function testDoNothingIfObjectNotExistOnAmazonOnRemove()
     {
         $s3 = $this->getAmazonS3Mock();
         $s3
             ->expects($this->once())
             ->method('if_object_exists')
-            ->with('images.example.com', 'thumb/some-folder/targetpath.jpg')
+            ->with('images.example.com', 'thumb/some-folder/path.jpg')
             ->will($this->returnValue(false))
         ;
         $s3
@@ -202,7 +202,7 @@ class AmazonS3ResolverTest extends AbstractTest
         ;
 
         $resolver = new AmazonS3Resolver($s3, 'images.example.com');
-        $this->assertTrue($resolver->remove('thumb/some-folder/targetpath.jpg', 'thumb'));
+        $this->assertTrue($resolver->remove('some-folder/path.jpg', 'thumb'));
     }
 
     public function testClearIsDisabled()

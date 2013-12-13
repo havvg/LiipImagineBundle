@@ -4,6 +4,7 @@ namespace Liip\ImagineBundle\Tests\Imagine\Cache\Resolver;
 
 use Liip\ImagineBundle\Imagine\Cache\Resolver\WebPathResolver;
 use Liip\ImagineBundle\Tests\AbstractTest;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -85,19 +86,6 @@ class WebPathResolverTest extends AbstractTest
         $this->assertEquals(201, $response->getStatusCode(),
             '->store() alters the HTTP response code to "201 - Created".');
         $this->assertEquals($content, $response->getContent());
-
-
-//TODO uncomment when remove method is refactored
-//        $this->assertTrue(file_exists($targetPath),
-//            '->store() creates the cached image file to be served.');
-//        $this->assertEquals($content, file_get_contents($targetPath),
-//            '->store() writes the content of the original Response into the cache file.');
-//
-//        // Remove the cached image.
-//        $this->assertTrue($this->resolver->remove($targetPath, 'thumbnail'),
-//            '->remove() reports removal of cached image file correctly.');
-//        $this->assertFalse(file_exists($targetPath),
-//            '->remove() actually removes the cached file from the filesystem.');
     }
 
     /**
@@ -208,13 +196,6 @@ class WebPathResolverTest extends AbstractTest
             '->store() creates the cached image file to be served.');
         $this->assertEquals($content, file_get_contents($targetPath),
             '->store() writes the content of the original Response into the cache file.');
-
-        //TODO uncomment when remove is refactored
-//        // Remove the cached image.
-//        $this->assertTrue($this->resolver->remove($targetPath, 'thumbnail'),
-//            '->remove() reports removal of cached image file correctly.');
-//        $this->assertFalse(file_exists($targetPath),
-//            '->remove() actually removes the cached file from the filesystem.');
     }
 
     /**
@@ -296,5 +277,48 @@ class WebPathResolverTest extends AbstractTest
 
         $this->setExpectedException('LogicException', 'The request was not injected, inject it before using resolver.');
         $this->resolver->resolve('/a/path', 'aFilter');
+    }
+
+    public function testRemoveCachedImageWhenExistOnRemove()
+    {
+        $this->cacheManager
+            ->expects($this->atLeastOnce())
+            ->method('generateUrl')
+            ->will($this->returnValue('/media/cache/thumbnail/cats.jpeg'))
+        ;
+
+        $path = 'cats.jpeg';
+        $targetPath = $this->webRoot.'/media/cache/thumbnail/cats.jpeg';
+
+        $this->filesystem->mkdir(dirname($targetPath));
+        file_put_contents($targetPath, file_get_contents($this->dataRoot.'/cats.jpeg'));
+
+        $this->resolver->setRequest(Request::create('/'));
+
+        // guard
+        $this->assertNotNull($this->resolver->resolve($path, 'thumbnail'));
+
+        $this->assertTrue($this->resolver->remove($path, 'thumbnail'));
+        $this->assertFalse(file_exists($targetPath));
+    }
+
+    public function testDoNothingIfCachedImageNotExistOnRemove()
+    {
+        $this->cacheManager
+            ->expects($this->atLeastOnce())
+            ->method('generateUrl')
+            ->will($this->returnValue('/media/cache/thumbnail/cats.jpeg'))
+        ;
+
+        $path = 'cats.jpeg';
+        $targetPath = $this->webRoot.'/media/cache/thumbnail/cats.jpeg';
+
+        // guard
+        $this->assertFalse(file_exists($targetPath));
+
+        $this->resolver->setRequest(Request::create('/'));
+
+        $this->assertTrue($this->resolver->remove($path, 'thumbnail'));
+        $this->assertFalse(file_exists($targetPath));
     }
 }
