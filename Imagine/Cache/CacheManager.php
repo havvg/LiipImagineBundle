@@ -194,7 +194,7 @@ class CacheManager
      * @see ResolverInterface::store
      *
      * @param Response $response
-     * @param string $targetPath
+     * @param string $path
      * @param string $filter
      *
      * @return Response
@@ -213,14 +213,14 @@ class CacheManager
      *
      * @see ResolverInterface::remove
      *
-     * @param string $targetPath
+     * @param string $path
      * @param string $filter
      *
      * @return bool
      */
-    public function remove($targetPath, $filter)
+    public function remove($path, $filter)
     {
-        return $this->getResolver($filter)->remove($targetPath, $filter);
+        return $this->getResolver($filter)->remove($path, $filter);
     }
 
     /**
