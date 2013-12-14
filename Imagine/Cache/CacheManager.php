@@ -164,12 +164,10 @@ class CacheManager
     /**
      * Resolves filtered path for rendering in the browser.
      *
-     * @param Request $request
      * @param string $path
      * @param string $filter
      *
-     * @return string|boolean|Response target path or false if filter has no
-     *      resolver or a Response object from the resolver
+     * @return Response|boolean The response of the respective Resolver or false.
      *
      * @throws NotFoundHttpException if the path can not be resolved
      */
